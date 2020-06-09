@@ -105,12 +105,22 @@ func (doc *Report) WriteHead() error {
 	return nil
 }
 
-//WriteEndHead end the Header
-/////@Params ftrmode:
-//"pages":For page index
-//"text" :For footer  text
-//others :none
-func (doc *Report) WriteEndHead(sethdr bool, ftrmode string, hdr string, ftr string) error {
+func (doc *Report) WriteEndHead() error {
+	_, err := doc.Doc.WriteString(XMLSectBegin)
+	if err != nil {
+		return err
+	}
+
+	_, err = doc.Doc.WriteString(XMLSectEnd)
+	if err != nil {
+		return err
+	}
+	doc.Doc.WriteString(XMLEndHead)
+
+	return nil
+}
+
+func (doc *Report) WriteEndHeadWithText(sethdr bool, ftrmode string, hdr string, ftr string) error {
 	_, err := doc.Doc.WriteString(XMLSectBegin)
 	if err != nil {
 		return err

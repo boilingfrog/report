@@ -12,7 +12,7 @@ func main() {
 	doc.WriteHead()
 	doc.WriteTitle(report.NewText("测试文档"))
 
-	doc.WriteTitle3(report.NewText("                               ———Web应用扫描"))
+	doc.WriteTitle3(report.NewText("                                        编号：2121234343"))
 	tableHead := [][]interface{}{
 		{report.NewText("部门或型号")},
 		{report.NewText("部门:研发;型号:martin;")},
@@ -57,6 +57,6 @@ func main() {
 	tableObj := report.NewTable("", true, table, tableHead, thw, trSpan, tdw, tdh)
 	doc.WriteTable(tableObj)
 	// 这一行要加上，结束word
-	doc.WriteEndHead(false, "text", "", "")
+	doc.WriteEndHead()
 
 }
