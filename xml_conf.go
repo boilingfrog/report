@@ -587,19 +587,19 @@ const (
 	`
 	//XMLTableHead ...
 	XMLTableHead = `<w:tbl>
-				<aml:annotation aml:id="0" w:type="Word.Bookmark.Start" w:name="%s"/>
-				<w:tblPr>
-					<w:tblW w:w="8380" w:type="dxa"/>
-					<w:tblBorders>
-					<w:top w:val="single" w:sz="12" wx:bdrwidth="30" w:space="0" w:color="D4D8DA"/>
-					<w:left w:val="nil"/>
-					<w:bottom w:val="single" w:sz="12" wx:bdrwidth="30" w:space="0" w:color="D4D8DA"/>
-					<w:right w:val="nil"/>
-					<w:insideH w:val="single" w:sz="12" wx:bdrwidth="30" w:space="0" w:color="D4D8DA"/>
-					<w:insideV w:val="nil"/>
-					</w:tblBorders>
-					<w:tblLayout w:type="Fixed"/>
-				</w:tblPr>
+<aml:annotation aml:id="0" w:type="Word.Bookmark.Start" w:name="%s"/>
+<w:tblPr>
+    <w:tblW w:w="8380" w:type="dxa"/>
+    <w:tblBorders>
+        <w:top w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+        <w:left w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+        <w:bottom w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+        <w:right w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+        <w:insideH w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+        <w:insideV w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+    </w:tblBorders>
+    <w:tblLayout w:type="Fixed"/>
+</w:tblPr>
 `
 	//XMLTableNoHead == 没有表头的样式把table top line remove掉
 	XMLTableNoHead = `<w:tbl>
@@ -688,7 +688,7 @@ const (
 	XMLHeadTableTDBegin = `<w:tc>
 	<w:tcPr>
 		<w:tcW w:w="%s" w:type="dxa"/>
-		<w:shd w:val="clear" w:color="auto" w:fill="D4D8DA"/>
+		<w:shd w:val="clear" w:color="auto" w:fill="auto"/>
 	</w:tcPr>
 `
 	//XMLHeadTableInTableTDBegin ...
@@ -782,6 +782,13 @@ const (
 	//XMLHeadTableTDEnd ...
 	XMLHeadTableTDEnd = `
 </w:tc>
+`
+	XMLTableTDHeight = `
+            <w:p wsp:rsidR="00A3623E" wsp:rsidRPr="005C368E" wsp:rsidRDefault="00A3623E" wsp:rsidP="005C368E">
+                <w:pPr>
+                    <w:jc w:val="left"/>
+                </w:pPr>
+           </w:p>
 `
 	//XMLTableEndTR ...
 	XMLTableEndTR = `</w:tr>

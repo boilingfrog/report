@@ -66,9 +66,11 @@ type Table struct {
 	Thw []int `json:"thw"`
 	//Table body width ,you should list all width inside the table body     (pixel)
 	Tdw []int `json:"tdw"`
+	// table height
+	Tdh []int `json:"tdh"`
 	///////////////////////////////////////////////////////////
 	//you can merge cells use GridSpan ,if you need not ,just set 0.
-	GridSpan []int `json:"gridspan"`
+	GridSpan [][]int `json:"gridspan"`
 	//Thcenter set table head center word
 	Thcenter bool `json:"thcenter"`
 }
@@ -261,6 +263,7 @@ func (doc *Report) WriteTable(table *Table) error {
 	thw := table.Thw
 	gridSpan := table.GridSpan
 	tdw := table.Tdw
+	tdh := table.Tdh
 	var used bool
 	used = false
 	//handle TableHead :Split with TableBody
@@ -338,10 +341,10 @@ func (doc *Report) WriteTable(table *Table) error {
 			var td string
 			if vv.TDBG {
 				//Span formation
-				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), "E7E6E6", strconv.FormatInt(int64(gridSpan[k]), 10))
+				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), "E7E6E6", strconv.FormatInt(int64(gridSpan[k][kk]), 10))
 			} else {
 				//Span formation
-				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), "auto", strconv.FormatInt(int64(gridSpan[k]), 10))
+				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), "auto", strconv.FormatInt(int64(gridSpan[k][kk]), 10))
 			}
 			XMLTable.WriteString(td)
 			tds := 0
@@ -416,6 +419,12 @@ func (doc *Report) WriteTable(table *Table) error {
 				XMLTable.WriteString(XMLIMGtail)
 				//reset inline flag
 				// inline = false
+			}
+			// 写入高度
+			if kk == len(v)-1 {
+				for i := 0; i < tdh[k]; i++ {
+					XMLTable.WriteString(fmt.Sprintf(XMLTableTDHeight))
+				}
 			}
 			XMLTable.WriteString(XMLHeadTableTDEnd)
 		}
@@ -819,7 +828,7 @@ func NewImage(URIdist string, imageSrc string, height float64, width float64, hy
 }
 
 //NewTable create a table
-func NewTable(tbname string, inline bool, tableBody [][]*TableTD, tableHead [][]interface{}, thw []int, gridSpan []int, tdw []int) *Table {
+func NewTable(tbname string, inline bool, tableBody [][]*TableTD, tableHead [][]interface{}, thw []int, gridSpan [][]int, tdw []int, tdh []int) *Table {
 	table := &Table{}
 	table.Tbname = tbname
 	table.Inline = inline
@@ -827,6 +836,8 @@ func NewTable(tbname string, inline bool, tableBody [][]*TableTD, tableHead [][]
 	table.TableHead = tableHead
 	table.Tdw = tdw
 	table.Thw = thw
+	table.Tdh = tdh
+
 	table.GridSpan = gridSpan
 	table.Thcenter = false
 	return table
