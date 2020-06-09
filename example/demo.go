@@ -57,6 +57,6 @@ func main() {
 	tableObj := report.NewTable("", true, table, tableHead, thw, trSpan, tdw, tdh)
 	doc.WriteTable(tableObj)
 	// 这一行要加上，结束word
-	doc.WriteEndHead(false, "text", "", "")
+	doc.WriteEndHead()
 
 }
