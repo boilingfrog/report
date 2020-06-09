@@ -66,9 +66,11 @@ type Table struct {
 	Thw []int `json:"thw"`
 	//Table body width ,you should list all width inside the table body     (pixel)
 	Tdw []int `json:"tdw"`
+	// table height
+	Tdh []int `json:"tdh"`
 	///////////////////////////////////////////////////////////
 	//you can merge cells use GridSpan ,if you need not ,just set 0.
-	GridSpan []int `json:"gridspan"`
+	GridSpan [][]int `json:"gridspan"`
 	//Thcenter set table head center word
 	Thcenter bool `json:"thcenter"`
 }
@@ -215,6 +217,14 @@ func (doc *Report) WriteTitle4(text *Text) error {
 	return nil
 }
 
+func (doc *Report) WriteXML(xml string) error {
+	_, err := doc.Doc.WriteString(xml)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 //WriteText == 正文的格式
 func (doc *Report) WriteText(text *Text) error {
 	color := text.Color
@@ -260,9 +270,13 @@ func (doc *Report) WriteTable(table *Table) error {
 	tableHead := table.TableHead
 	thw := table.Thw
 	gridSpan := table.GridSpan
+	_ = gridSpan
 	tdw := table.Tdw
+	tdh := table.Tdh
+
 	var used bool
 	used = false
+	_ = used
 	//handle TableHead :Split with TableBody
 	if tableHead != nil {
 		tablehead := fmt.Sprintf(XMLTableHead, tbname)
@@ -330,7 +344,7 @@ func (doc *Report) WriteTable(table *Table) error {
 	}
 	//Generate formation
 	for k, v := range tableBody {
-
+		_ = k
 		XMLTable.WriteString(XMLTableTR)
 
 		for kk, vv := range v {
@@ -338,12 +352,21 @@ func (doc *Report) WriteTable(table *Table) error {
 			var td string
 			if vv.TDBG {
 				//Span formation
-				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), "E7E6E6", strconv.FormatInt(int64(gridSpan[k]), 10))
+				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), strconv.FormatInt(int64(gridSpan[k][kk]), 10))
 			} else {
 				//Span formation
-				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), "auto", strconv.FormatInt(int64(gridSpan[k]), 10))
+				td = fmt.Sprintf(XMLTableTD, strconv.FormatInt(int64(tdw[kk]), 10), strconv.FormatInt(int64(gridSpan[k][kk]), 10))
 			}
 			XMLTable.WriteString(td)
+			// 写入高度
+			if kk == len(v)-1 {
+				for i := 0; i < tdh[k]; i++ {
+					XMLTable.WriteString(fmt.Sprintf(XMLTableTDHeight))
+				}
+			}
+
+			XMLTable.WriteString(XMLTableTDEnd)
+
 			tds := 0
 
 			// vv.TData = append(vv.TData, "")
@@ -419,46 +442,47 @@ func (doc *Report) WriteTable(table *Table) error {
 			}
 			XMLTable.WriteString(XMLHeadTableTDEnd)
 		}
+
 		XMLTable.WriteString(XMLTableEndTR)
 	}
 	XMLTable.WriteString(XMLTableFooter)
 	//serialization
 	var rows []interface{}
-
-	for _, row := range tableBody {
-		for _, rowdata := range row {
-			for _, rowEle := range rowdata.TData {
-				if _, ok := rowEle.([][][]interface{}); !ok {
-					if icon, ok := rowEle.(*Image); ok {
-						//图片
-						imageSrc := icon.ImageSrc
-						bindata, err := getImagedata(imageSrc)
-						URI := "wordml://" + icon.URIDist
-						if err != nil {
-							return err
-						}
-
-						if icon.Hyperlink != "" {
-							rows = append(rows, icon.Hyperlink, URI, bindata, filepath.Base(imageSrc), URI, filepath.Base(imageSrc))
-						} else {
-							rows = append(rows, URI, bindata, filepath.Base(imageSrc), URI, filepath.Base(imageSrc))
-						}
-					} else if text, ok := rowEle.(*Text); ok {
-						tColor := text.Color
-						tSize := text.Size
-						tWord := text.Words
-						rows = append(rows, tColor, tSize, tSize, tWord)
-					}
-				}
-			}
-		}
-	}
+	//
+	//for _, row := range tableBody {
+	//	for _, rowdata := range row {
+	//		for _, rowEle := range rowdata.TData {
+	//			if _, ok := rowEle.([][][]interface{}); !ok {
+	//				if icon, ok := rowEle.(*Image); ok {
+	//					//图片
+	//					imageSrc := icon.ImageSrc
+	//					bindata, err := getImagedata(imageSrc)
+	//					URI := "wordml://" + icon.URIDist
+	//					if err != nil {
+	//						return err
+	//					}
+	//
+	//					if icon.Hyperlink != "" {
+	//						rows = append(rows, icon.Hyperlink, URI, bindata, filepath.Base(imageSrc), URI, filepath.Base(imageSrc))
+	//					} else {
+	//						rows = append(rows, URI, bindata, filepath.Base(imageSrc), URI, filepath.Base(imageSrc))
+	//					}
+	//				} else if text, ok := rowEle.(*Text); ok {
+	//					tColor := text.Color
+	//					tSize := text.Size
+	//					tWord := text.Words
+	//					rows = append(rows, tColor, tSize, tSize, tWord)
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
 	//data fill in
 
 	tabledata := fmt.Sprintf(XMLTable.String(), rows...)
-
-	_, err := doc.Doc.WriteString(tabledata)
+	fmt.Println(tabledata)
+	_, err := doc.Doc.WriteString(XMLTable.String())
 	if err != nil {
 		return err
 	}
@@ -819,7 +843,7 @@ func NewImage(URIdist string, imageSrc string, height float64, width float64, hy
 }
 
 //NewTable create a table
-func NewTable(tbname string, inline bool, tableBody [][]*TableTD, tableHead [][]interface{}, thw []int, gridSpan []int, tdw []int) *Table {
+func NewTable(tbname string, inline bool, tableBody [][]*TableTD, tableHead [][]interface{}, thw []int, gridSpan [][]int, tdw []int, tdh []int) *Table {
 	table := &Table{}
 	table.Tbname = tbname
 	table.Inline = inline
@@ -827,6 +851,8 @@ func NewTable(tbname string, inline bool, tableBody [][]*TableTD, tableHead [][]
 	table.TableHead = tableHead
 	table.Tdw = tdw
 	table.Thw = thw
+	table.Tdh = tdh
+
 	table.GridSpan = gridSpan
 	table.Thcenter = false
 	return table

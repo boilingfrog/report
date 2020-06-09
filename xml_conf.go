@@ -591,12 +591,12 @@ const (
 				<w:tblPr>
 					<w:tblW w:w="8380" w:type="dxa"/>
 					<w:tblBorders>
-					<w:top w:val="single" w:sz="12" wx:bdrwidth="30" w:space="0" w:color="D4D8DA"/>
-					<w:left w:val="nil"/>
-					<w:bottom w:val="single" w:sz="12" wx:bdrwidth="30" w:space="0" w:color="D4D8DA"/>
-					<w:right w:val="nil"/>
-					<w:insideH w:val="single" w:sz="12" wx:bdrwidth="30" w:space="0" w:color="D4D8DA"/>
-					<w:insideV w:val="nil"/>
+						<w:top w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+						<w:left w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+						<w:bottom w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+						<w:right w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+						<w:insideH w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+						<w:insideV w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
 					</w:tblBorders>
 					<w:tblLayout w:type="Fixed"/>
 				</w:tblPr>
@@ -615,6 +615,7 @@ const (
 				<w:insideV w:val="nil"/>
 				</w:tblBorders>
 				<w:tblLayout w:type="Fixed"/>
+ 			<w:tblLook w:val="04A0"/>
 			</w:tblPr>
 `
 	//XMLTableInTableHead == 表中表的样式头
@@ -650,7 +651,7 @@ const (
 		</w:tblPr>
 `
 	//XMLTableTR ...
-	XMLTableTR = `<w:tr wsp:rsidR="00AF5A68" wsp:rsidTr="00AF5A68">
+	XMLTableTR = `<w:tr wsp:rsidR="00A3623E" wsp:rsidRPr="005C368E" wsp:rsidTr="005C368E">
 `
 	//XMLTableHeadTR ...
 	XMLTableHeadTR = `<w:tr wsp:rsidR="00AF5A68" wsp:rsidTr="00AF5A68">
@@ -659,13 +660,39 @@ const (
 </w:trPr>
 `
 	//XMLTableTD ...
-	XMLTableTD = `<w:tc>
-  <w:tcPr>
-	              <w:tcW w:w="%s" w:type="dxa"/>
-    <w:shd w:val="clear" w:color="auto" w:fill="%s"/>
-			<w:gridSpan w:val="%s"/>
-  </w:tcPr>
+	XMLTableTD = `
+     <w:tc>
+            <w:tcPr>
+                <w:tcW w:w="%s" w:type="dxa"/>
+ 				<w:gridSpan w:val="%s"/>
+                <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+            </w:tcPr>
+            <w:p wsp:rsidR="00A3623E" wsp:rsidRPr="005C368E" wsp:rsidRDefault="00CE5929" wsp:rsidP="005C368E">
+                <w:pPr>
+                    <w:jc w:val="left"/>
+                </w:pPr>
+                <w:r wsp:rsidRPr="005C368E">
+                    <w:rPr>
+                        <w:rFonts w:hint="fareast"/>
+                    </w:rPr>
+                    <w:t>2121</w:t>
+                </w:r>
+            </w:p>
+   
 `
+
+	XMLTableTDEnd = `
+ </w:tc>
+`
+
+	XMLTableTDHeight = `
+            <w:p wsp:rsidR="00A3623E" wsp:rsidRPr="005C368E" wsp:rsidRDefault="00A3623E" wsp:rsidP="005C368E">
+                <w:pPr>
+                    <w:jc w:val="left"/>
+                </w:pPr>
+            </w:p>
+`
+
 	//XMLTableInTableTD ...
 	XMLTableInTableTD = `<w:tc>
 <w:tcPr>
@@ -688,7 +715,7 @@ const (
 	XMLHeadTableTDBegin = `<w:tc>
 	<w:tcPr>
 		<w:tcW w:w="%s" w:type="dxa"/>
-		<w:shd w:val="clear" w:color="auto" w:fill="D4D8DA"/>
+		<w:shd w:val="clear" w:color="auto" w:fill="auto"/>
 	</w:tcPr>
 `
 	//XMLHeadTableInTableTDBegin ...
