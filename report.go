@@ -441,7 +441,7 @@ func (doc *Report) WriteTable(table *Table) error {
 				// inline = false
 			}
 			// 写入高度
-			if kk == len(v)-1 {
+			if kk == len(v)-1 && len(tdh) >= k && len(tdh) > 0 {
 				for i := 0; i < tdh[k]; i++ {
 					XMLTable.WriteString(fmt.Sprintf(XMLTableTDHeight))
 				}

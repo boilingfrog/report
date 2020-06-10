@@ -7,7 +7,10 @@ import (
 
 func TestEscape(t *testing.T) {
 	doc := NewDoc()
-	doc.InitDoc("escape.doc")
+	if err := doc.CreateDoc("escape.doc"); err != nil {
+		t.Errorf(err.Error())
+	}
+	defer doc.CloseReport()
 
 	if err := doc.WriteHead(); err != nil {
 		t.Errorf(err.Error())
@@ -21,13 +24,16 @@ func TestEscape(t *testing.T) {
 		t.Log("TestWriteText succeed")
 	}
 
-	if err := doc.WriteEndHead(true, "pages", "Hello World", ""); err != nil {
+	if err := doc.WriteEndHeadWithText(true, "pages", "Hello World", ""); err != nil {
 		t.Errorf(err.Error())
 	} else {
 		t.Log("TestWriteEndHead Succeed")
 	}
 
-	doc.Doc.Close()
+	// 这一行要加上，结束word
+	if err := doc.WriteEndHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 }
 
 func TestEscapeCauseCrash(t *testing.T) {
@@ -43,7 +49,10 @@ func TestEscapeCauseCrash(t *testing.T) {
 	}
 
 	doc := NewDoc()
-	doc.InitDoc("escapeCauseCrash.doc")
+	if err := doc.CreateDoc("escapeCauseCrash.doc"); err != nil {
+		t.Errorf(err.Error())
+	}
+	defer doc.CloseReport()
 
 	if err := doc.WriteHead(); err != nil {
 		t.Errorf(err.Error())
@@ -57,12 +66,14 @@ func TestEscapeCauseCrash(t *testing.T) {
 		t.Log("TestWriteText succeed")
 	}
 
-	if err := doc.WriteEndHead(true, "pages", "Hello World", ""); err != nil {
+	if err := doc.WriteEndHeadWithText(true, "pages", "Hello World", ""); err != nil {
 		t.Errorf(err.Error())
 	} else {
 		t.Log("TestWriteEndHead Succeed")
 	}
 
-	doc.Doc.Close()
-
+	// 这一行要加上，结束word
+	if err := doc.WriteEndHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 }

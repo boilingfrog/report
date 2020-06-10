@@ -1,6 +1,8 @@
 package report
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestNewdoc(t *testing.T) {
 	doc := NewDoc()
@@ -14,79 +16,130 @@ func TestNewdoc(t *testing.T) {
 	}
 }
 
-func TestWriteHead(t *testing.T) {
-	doc := NewDoc()
-	doc.InitDoc("demo.doc")
-	err := doc.WriteHead()
-	if err != nil {
-		t.Errorf(err.Error())
-	} else {
-		t.Log("WriteHead Succeed")
-	}
-	doc.Doc.Close()
-}
-
 func TestWriteTitle1(t *testing.T) {
 	doc := NewDoc()
-	doc.InitDoc("demo.doc")
+	if err := doc.CreateDoc("demo.doc"); err != nil {
+		t.Errorf(err.Error())
+	}
+	defer doc.CloseReport()
+
+	if err := doc.WriteHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 	err := doc.WriteTitle1(NewText("Hello World"))
 	if err != nil {
 		t.Errorf(err.Error())
 	} else {
 		t.Log("TestWriteTitle1 Succeed")
 	}
-	doc.Doc.Close()
+
+	// 这一行要加上，结束word
+	if err := doc.WriteEndHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 }
 
 func TestWriteTitle2(t *testing.T) {
 	doc := NewDoc()
-	doc.InitDoc("demo.doc")
+	if err := doc.CreateDoc("demo.doc"); err != nil {
+		t.Errorf(err.Error())
+	}
+	defer doc.CloseReport()
+
+	if err := doc.WriteHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 	err := doc.WriteTitle2(NewText("Hello World"))
 	if err != nil {
 		t.Errorf(err.Error())
 	} else {
 		t.Log("TestWriteTitle2 Succeed")
 	}
-	doc.Doc.Close()
+
+	// 这一行要加上，结束word
+	if err := doc.WriteEndHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 }
 
 func TestWriteTitle3(t *testing.T) {
 	doc := NewDoc()
-	doc.InitDoc("demo.doc")
+	if err := doc.CreateDoc("demo.doc"); err != nil {
+		t.Errorf(err.Error())
+	}
+	defer doc.CloseReport()
+
+	if err := doc.WriteHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 	err := doc.WriteTitle3(NewText("Hello World"))
 	if err != nil {
 		t.Errorf(err.Error())
 	} else {
 		t.Log("TestWriteTitle3 Succeed")
 	}
-	doc.Doc.Close()
+
+	// 这一行要加上，结束word
+	if err := doc.WriteEndHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 }
 func TestWriteBr(t *testing.T) {
 	doc := NewDoc()
-	doc.InitDoc("demo.doc")
+	if err := doc.CreateDoc("demo.doc"); err != nil {
+		t.Errorf(err.Error())
+	}
+	defer doc.CloseReport()
+
+	if err := doc.WriteHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 	err := doc.WriteBR()
 	if err != nil {
 		t.Errorf(err.Error())
 	} else {
 		t.Log("TestWriteBr Succeed")
 	}
-	doc.Doc.Close()
+
+	// 这一行要加上，结束word
+	if err := doc.WriteEndHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 }
 
 func TestWriteText(t *testing.T) {
 	doc := NewDoc()
-	doc.InitDoc("demo.doc")
+	if err := doc.CreateDoc("demo.doc"); err != nil {
+		t.Errorf(err.Error())
+	}
+	defer doc.CloseReport()
+
+	if err := doc.WriteHead(); err != nil {
+		t.Errorf(err.Error())
+	}
+
 	err := doc.WriteText(NewText("Hello World"))
 	if err != nil {
 		t.Errorf(err.Error())
 	} else {
 		t.Log("TestWriteText succeed")
 	}
-	doc.Doc.Close()
+
+	// 这一行要加上，结束word
+	if err := doc.WriteEndHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 }
 func TestWriteTable(t *testing.T) {
 	doc := NewDoc()
-	doc.InitDoc("demo.doc")
+	if err := doc.CreateDoc("demo.doc"); err != nil {
+		t.Errorf(err.Error())
+	}
+	defer doc.CloseReport()
+
+	if err := doc.WriteHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 	// tabletd := NewTableTD([]interface{}{{, }, {{"a"}, {"b"}}, {{"xxx"}, {"yyyy"}}})
 	td0 := NewTableTD([]interface{}{"aaa"})
 	td1 := NewTableTD([]interface{}{"bbb"})
@@ -96,40 +149,76 @@ func TestWriteTable(t *testing.T) {
 	td5 := NewTableTD([]interface{}{"yyyyy"})
 	table := [][]*TableTD{{td0, td1}, {td2, td3}, {td4, td5}}
 	head := [][]interface{}{{"Hello"}, {"World"}}
-	trSpan := []int{0, 0, 0}
 	tdw := []int{4190, 4190, 4190, 4190, 4190, 4190}
 	thw := []int{4190, 4190}
-	tableObj := NewTable("test", false, table, head, thw, trSpan, tdw)
+	trSpan := [][]int{
+		{0, 0},
+		{0, 0},
+		{0, 0},
+	}
+	tdh := []int{2, 2, 2}
+
+	tableObj := NewTable("test", false, table, head, thw, trSpan, tdw, tdh)
 	err := doc.WriteTable(tableObj)
 	if err != nil {
 		t.Errorf(err.Error())
 	} else {
 		t.Log("TestWriteTable Succeed")
 	}
-	doc.Doc.Close()
+
+	// 这一行要加上，结束word
+	if err := doc.WriteEndHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 }
 func TestWriteImage(t *testing.T) {
 	doc := NewDoc()
-	doc.InitDoc("demo.doc")
+	if err := doc.CreateDoc("demo.doc"); err != nil {
+		t.Errorf(err.Error())
+	}
+	defer doc.CloseReport()
+
+	if err := doc.WriteHead(); err != nil {
+		t.Errorf(err.Error())
+	}
+
 	image1 := NewImage("1.png", "./images/offlineWS-102-risk.png", 140.00, 160.00, "")
 	image2 := NewImage("2.png", "./images/offlineWS-102-url.png", 140.00, 160.00, "")
 	images := []*Image{image1, image2}
+
 	if err := doc.WriteImage(false, "", images...); err != nil {
 		t.Errorf(err.Error())
 	} else {
 		t.Log("TestWriteImage Succeed")
 	}
-	doc.Doc.Close()
+
+	// 这一行要加上，结束word
+	if err := doc.WriteEndHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 }
 
 func TestWriteEndHead(t *testing.T) {
 	doc := NewDoc()
-	doc.InitDoc("demo.doc")
-	err := doc.WriteEndHead(true, "pages", "Hello World", "")
+	if err := doc.CreateDoc("demo.doc"); err != nil {
+		t.Errorf(err.Error())
+	}
+
+	defer doc.CloseReport()
+
+	if err := doc.WriteHead(); err != nil {
+		t.Errorf(err.Error())
+	}
+
+	err := doc.WriteEndHeadWithText(true, "pages", "Hello World", "")
 	if err != nil {
 		t.Errorf(err.Error())
 	} else {
 		t.Log("TestWriteEndHead Succeed")
 	}
-	doc.Doc.Close()
+
+	// 这一行要加上，结束word
+	if err := doc.WriteEndHead(); err != nil {
+		t.Errorf(err.Error())
+	}
 }
