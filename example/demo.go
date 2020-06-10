@@ -8,7 +8,7 @@ import (
 
 func main() {
 	doc := report.NewDoc()
-	err := doc.NewDoc("example/report.doc")
+	err := doc.CreateDoc("example/report.doc")
 	if err != nil {
 		panic(err)
 	}

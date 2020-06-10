@@ -96,7 +96,7 @@ func (doc *Report) InitDoc(filename string) error {
 }
 
 // create a new one
-func (doc *Report) NewDoc(filename string) error {
+func (doc *Report) CreateDoc(filename string) error {
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
