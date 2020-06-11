@@ -2,18 +2,18 @@ package main
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/report"
 )
 
 func main() {
 	doc := report.NewDoc()
-	err := doc.CreateDoc("example/report.doc")
+
+	err := doc.NewBuffer()
 	if err != nil {
 		panic(err)
 	}
-
-	defer doc.CloseReport()
 
 	if err := doc.WriteHead(); err != nil {
 		fmt.Println(err)
@@ -75,4 +75,13 @@ func main() {
 	if err := doc.WriteEndHead(); err != nil {
 		fmt.Println(err)
 	}
+
+	fmt.Println(doc.Buffer.String())
+
+	var i io.Writer
+
+	doc.SaveTo(i)
+
+	fmt.Println(i)
+
 }
