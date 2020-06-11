@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -13,7 +14,8 @@ import (
 
 //Report implement the os.File
 type Report struct {
-	Doc *os.File
+	Buffer *bytes.Buffer
+	Doc    *bufio.Writer
 }
 
 //Text include text configuration
@@ -77,32 +79,27 @@ type Table struct {
 
 //NewDoc new a Document
 func NewDoc() *Report {
-	return &Report{}
-}
-
-//InitDoc init the MS doc file ,don't forget to close.
-func (doc *Report) InitDoc(filename string) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY, os.ModeAppend)
-	if err != nil {
-		file, err = os.Create(filename)
-		if err != nil {
-			return err
-		}
-		doc.Doc = file
-		return nil
+	return &Report{
+		Buffer: bytes.NewBuffer(make([]byte, 0)),
 	}
-	doc.Doc = file
-	return err
 }
 
 // create a new one
-func (doc *Report) CreateDoc(filename string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	doc.Doc = file
+func (doc *Report) NewBuffer() error {
+	w := bufio.NewWriter(doc.Buffer)
+	doc.Doc = w
 	return nil
+}
+
+// SaveTo ...
+func (doc *Report) SaveTo(writer io.Writer) error {
+	if err := doc.Doc.Flush(); err != nil {
+		return nil
+	}
+
+	_, err := doc.Buffer.WriteTo(writer)
+
+	return err
 }
 
 //WriteHead init the header
@@ -911,11 +908,6 @@ func NewTableTD(tdata []interface{}) *TableTD {
 //SetTableTDBG set block's color with gray(#E7E6E6)
 func (tbtd *TableTD) SetTableTDBG() {
 	tbtd.TDBG = true
-}
-
-//CloseReport close file handle
-func (doc *Report) CloseReport() error {
-	return doc.Doc.Close()
 }
 
 //Solve  the  '%' cause (MISSING) crash problem
